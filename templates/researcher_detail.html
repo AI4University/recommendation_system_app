@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RECOMMENDATION SYSTEM</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo UC3M">
+        <div class="header-content">
+            <a href="{{ url_for('index') }}" class="recommendation-text">Recommendation System</a>
+            <div class="header-rectangle"></div>
+        </div>
+    </header>
+
+    <div class="researcher-info">
+        <h1>{{ researcher[0]['Name'] }}</h1>
+        <a class="researcher-link" href="https://researchportal.uc3m.es/display/{{ researcher[0]['invID'] }}" target="_blank">Go to research portal profile</a>
+    </div>
+    <p><strong>Researcher category:</strong> {{ researcher[0]['Category']}}</p>
+    <p><strong>Researcher Department:</strong> {{ researcher[0]['Department']}}</p>
+    <p><strong>Research Group:</strong> {{ researcher[0]['Research Group']}}</p>
+    <p><strong>Researcher main Subject:</strong> {{ researcher[0]['Subjects']}}</p>
+    <p><strong>Number of Publications:</strong> {{ researcher[0]['no Publis']}}</p>
+
+    
+    <div id="formsContainer">
+        <form action="" method="post">
+        <fieldset>
+            <legend>Select a method for the recommendations:</legend>
+            <label><input type="checkbox" name="options" value="word2vec">Cosine similarity computed over word2vec embeddings</label>
+            <label><input type="checkbox" name="options" value="bert">Cosine similarity computed over BERT embeddings</label>
+            <label><input type="checkbox" name="options" value="tf-idf">Cosine similarity computed over TF-IDF vectorizations</label>
+            <label><input type="checkbox" name="options" value="bhattacharyya">Bhattacharyya similarity of topics distributions</label>
+        </fieldset>
+        </select>
+
+            <br>
+            <label for="recommendation_number">Introduce the desired number of recommendations:</label>
+            <input type="number" name="number_recommendations" id="number_recommendations" min="1" required>
+            <br>
+            <button type="submit">Obtain recommended Calls</button>
+        </form>
+    </div>
+
+    {% if recommendations %}
+        {% for method, calls in recommendations.items() %}
+            <h2>{{ method }}</h2>
+            <ul>
+                {% for call in calls %}
+                <li> <a href="{{ url_for('call_detail', call=call['Call']) }}"> {{ call['Title'] }}</a> - similarity: {{call['similarity']}} - Cluster: {{call['Work Programme']}}</li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    {% endif %}
+
+   </body>

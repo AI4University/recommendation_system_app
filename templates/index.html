@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RECOMMENDATION SYSTEM</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo UC3M">
+        <div class="header-content">
+            <a href="{{ url_for('index') }}" class="recommendation-text">Recommendation System</a>
+            <div class="header-rectangle"></div>
+        </div>
+    </header>
+
+
+    <h1>SELECT A CALL FOR OBTAINING RECOMMENDATIONS:</h1>
+    <div id="formsContainer">
+        <form id="clusterForm" method="post">
+            <label for="cluster">Select an Horizon Cluster:</label>
+            <select name="cluster" id="cluster">
+                <option value="health">Health</option>
+                <option value="culture"> Culture, Creativity and Inclusive Society</option>
+                <option value="security"> Civil Security for Society</option>
+                <option value="digital">  Digital, Industry and Space</option>
+                <option value="climate"> Climate, Energy and Mobility</option>
+                <option value="food"> Food, Bio-economy, Natural Resources, Agriculture and Environment</option>
+            </select>
+
+            <label for="search">Filter by Call Title:</label>
+            <input type="text" id="search" name="search" oninput="searchCalls(this.value)">
+
+        </form>
+
+        <form id="callForm" method="post">
+            <label for="callId">Search by Call ID:</label>
+            <input type="text" id="callId" name="callId">
+
+            <form action="/searchByResearcher" method="post">
+                <button type="submit">Search</button>
+            </form>
+        </form>
+
+        <form action="/searchByResearcher" method="post" id="researcherSearchButton">
+            <button type="submit">Search by Researcher</button>
+        </form>
+    
+    </div>
+
+    {% if calls %}
+        {% if request.form.get('cluster') %}
+            <h2 id="textCluster">Calls for the Horizon Cluster:</h2>
+        {% else %}
+
+        {% endif %}
+        <ul id="convocatoriasList">
+            {% for call in calls %}
+                <li><a href="{{ url_for('call_detail', call=call['Call']) }}">{{ call['Title'] }}</a></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+</body>
+<script>
+    // Obtener el elemento select y el formulario
+    var clusterSelect = document.getElementById('cluster');
+    var clusterForm = document.getElementById('clusterForm');
+    var textCluster = document.getElementById('textCluster');
+
+    // Cuando se cambia la selección, almacenar el valor en el almacenamiento local
+    clusterSelect.addEventListener('change', function() {
+        localStorage.setItem('clusterSeleccionado', clusterSelect.value);
+        // Enviar el formulario automáticamente
+        clusterForm.submit();
+    });
+
+    // Cuando se carga la página, restaurar la selección anterior si existe
+    window.onload = function() {
+        var clusterSeleccionado = localStorage.getItem('clusterSeleccionado');
+        if (clusterSeleccionado) {
+            clusterSelect.value = clusterSeleccionado;
+            
+            //update text
+            textCluster.textContent = "Calls for the  " + clusterSelect.options[clusterSelect.selectedIndex].text + " cluster:";
+
+        }
+    };
+
+    function searchCalls(keyword) {
+        // Obtener la lista de convocatorias y el contenedor
+        var callsList = document.getElementById('convocatoriasList');
+        var calls = callsList.getElementsByTagName('li');
+
+        // Convertir el texto de búsqueda a minúsculas para una comparación insensible a mayúsculas y minúsculas
+        keyword = keyword.toLowerCase();
+
+        // Iterar sobre las convocatorias y mostrar solo las que coinciden con el texto de búsqueda
+        for (var i = 0; i < calls.length; i++) {
+            var call = calls[i];
+            var title = call.textContent || call.innerText; // Obtener el texto de la convocatoria
+
+            // Comparar el texto de la convocatoria con el texto de búsqueda
+            if (title.toLowerCase().indexOf(keyword) === 0) {
+                call.style.display = ''; // Mostrar la convocatoria si coincide
+            } else {
+                call.style.display = 'none'; // Ocultar la convocatoria si no coincide
+            }
+        }
+    }
+
+
+</script>
+
+</html>

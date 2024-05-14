@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RECOMMENDATION SYSTEM</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo UC3M">
+        <div class="header-content">
+            <a href="{{ url_for('index') }}" class="recommendation-text">Recommendation System</a>
+            <div class="header-rectangle"></div>
+        </div>
+    </header>
+
+    <h1>{{call[0]['Title']}}</h1>
+    <p><strong>Main topics of the call:</strong> {{ call[0]['tpc_ordered']}}</p>
+
+    <hr>
+
+    <div id="formsContainer">
+        <form action="" method="post">
+        <fieldset>
+            <legend>Select a method for the recommendations:</legend>
+            <label><input type="checkbox" name="options" value="word2vec">Cosine similarity computed over word2vec embeddings</label>
+            <label><input type="checkbox" name="options" value="bert">Cosine similarity computed over BERT embeddings</label>
+            <label><input type="checkbox" name="options" value="tf-idf">Cosine similarity computed over TF-IDF vectorizations</label>
+            <label><input type="checkbox" name="options" value="bhattacharyya">Bhattacharyya similarity of topics distributions</label>
+        </fieldset>
+        </select>
+
+            <br>
+            <label for="recommendation_number">Introduce the desired number of recommendations:</label>
+            <input type="number" name="number_recommendations" id="number_recommendations" min="1" required>
+            <br>
+            <button type="submit">Obtain recommended researchers</button>
+        </form>
+    </div>
+    {% if recommendations %}
+        {% for method, researchers in recommendations.items() %}
+            <h2>{{ method }}</h2>
+            <ul>
+                {% for researcher in researchers %}
+                <li><a href="https://researchportal.uc3m.es/display/{{ researcher['invID'] }}"  target="_blank">{{ researcher['Name'] }}</a> - {{ researcher['Subjects'] }} - {{ researcher['no Publis'] }} publications - similarity: {{ researcher['similarity'] }} </li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    {% endif %}
+</body>
