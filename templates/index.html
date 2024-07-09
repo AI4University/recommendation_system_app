@@ -15,59 +15,99 @@
         </div>
     </header>
 
-
-    <h1>SELECT A CALL FOR OBTAINING RECOMMENDATIONS:</h1>
-    <div id="formsContainer">
-        <form id="clusterForm" method="post">
-            <label for="cluster">Select an Horizon Cluster:</label>
-            <select name="cluster" id="cluster">
-                <option value="health">Health</option>
-                <option value="culture"> Culture, Creativity and Inclusive Society</option>
-                <option value="security"> Civil Security for Society</option>
-                <option value="digital">  Digital, Industry and Space</option>
-                <option value="climate"> Climate, Energy and Mobility</option>
-                <option value="food"> Food, Bio-economy, Natural Resources, Agriculture and Environment</option>
-            </select>
-
-            <label for="search">Filter by Call Title:</label>
-            <input type="text" id="search" name="search" oninput="searchCalls(this.value)">
-
-        </form>
-
-        <form id="callForm" method="post">
-            <label for="callId">Search by Call ID:</label>
-            <input type="text" id="callId" name="callId">
-
-            <form action="/searchByResearcher" method="post">
-                <button type="submit">Search</button>
+    <div id="formsWrapper">
+        <div id="formsContainer">
+            <h2>Obtain Researchers Recommendations</h2>
+            <form id="clusterForm" method="post" action="{{ url_for('filter_calls') }}">
+                <label for="cluster">Filter by Horizon Cluster:</label>
+                <select name="cluster" id="cluster">
+                    <option value="health">Health</option>
+                    <option value="culture">Culture, Creativity and Inclusive Society</option>
+                    <option value="security">Civil Security for Society</option>
+                    <option value="digital">Digital, Industry and Space</option>
+                    <option value="climate">Climate, Energy and Mobility</option>
+                    <option value="food">Food, Bio-economy, Natural Resources, Agriculture and Environment</option>
+                </select>
+                <br>
+                <label for="search">Filter by Call Title:</label>
+                <input type="text" id="search" name="search" oninput="searchCalls(this.value)">
             </form>
-        </form>
+        </div>
 
-        <form action="/searchByResearcher" method="post" id="researcherSearchButton">
-            <button type="submit">Search by Researcher</button>
-        </form>
-    
+        <div id="formsContainer">
+            <h2>Obtain Calls Recommendations</h2>
+            <form id="departmentForm" method="post" action="{{ url_for('filter_researchers') }}">
+                <label for="department">Filter by Department:</label>
+                <select name="department" id="department">
+                    <option value="Computer Science and Engineering">Computer Science and Engineering</option>
+                    <option value="Business Administration">Business Administration</option>
+                    <option value="Social Sciences">Social Sciences</option>
+                    <option value="Economics">Economics</option>
+                    <option value="Communication Studies">Communication Studies</option>
+                    <option value="Signal Theory and Communications">Signal Theory and Communications</option>
+                    <option value="Mathematics">Mathematics</option>
+                    <option value="Mechanical Engineering">Mechanical Engineering</option>
+                    <option value="Electronic Technology">Electronic Technology</option>
+                    <option value="Aerospace Engineering">Aerospace Engineering</option>
+                    <option value="Telematic Engineering">Telematic Engineering</option>
+                    <option value="Materials Science and Engineering and Chemical Engineering">Materials Science and Engineering and Chemical Engineering</option>
+                    <option value="Thermal and Fluids Engineering">Thermal and Fluids Engineering</option>
+                    <option value="Systems Engineering and Automation">Systems Engineering and Automation</option>
+                    <option value="Statistics">Statistics</option>
+                    <option value="Humanities: History, Geography, and Art">Humanities: History, Geography, and Art</option>
+                    <option value="Bioengineering">Bioengineering</option>
+                    <option value="International Law, Ecclesiastical Law and Philosophy of Law">International Law, Ecclesiastical Law and Philosophy of Law</option>
+                    <option value="Public State Law">Public State Law</option>
+                    <option value="Humanities: Philosophy, Language, Literature Theory">Humanities: Philosophy, Language, Literature Theory</option>
+                    <option value="Physics">Physics</option>
+                    <option value="Private Law">Private Law</option>
+                    <option value="Continuum Mechanics and Structural Analysis">Continuum Mechanics and Structural Analysis</option>
+                    <option value="Library and Information Science">Library and Information Science</option>
+                    <option value="Private Social and International Law">Private Social and International Law</option>
+                    <option value="Criminal Law, Procedural Law and History Law">Criminal Law, Procedural Law and History Law</option>
+                    <option value="Electrical Engineering">Electrical Engineering</option>
+                    <option value="Social Analysis">Social Analysis</option>
+                </select>
+                <br>
+                <label for="search">Filter by Researcher Name:</label>
+                <input type="text" id="search" name="search" oninput="searchResearcher(this.value)">
+            </form>
+        </div>
     </div>
 
-    {% if calls %}
-        {% if request.form.get('cluster') %}
-            <h2 id="textCluster">Calls for the Horizon Cluster:</h2>
-        {% else %}
+    <div id="formsWrapper">
+        <div id="listsWrapper">
+            {% if calls %}
+            <ul id="convocatoriasList">
+                {% for call in calls %}
+                    <li><a href="{{ url_for('call_detail', call=call['Call']) }}">{{ call['Title'] }}</a></li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
 
-        {% endif %}
-        <ul id="convocatoriasList">
-            {% for call in calls %}
-                <li><a href="{{ url_for('call_detail', call=call['Call']) }}">{{ call['Title'] }}</a></li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+        <div id="listsWrapper">
+            {% if researchers %}
+            <ul id="researcherList">
+                {% for researcher in researchers %}
+                    <li><a href="{{ url_for('researcher_detail', researcher_id=researcher['id_researcher']) }}">{{ researcher['Name'] }}</a></li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+    </div>
 
 </body>
+</html>
 <script>
     // Obtener el elemento select y el formulario
     var clusterSelect = document.getElementById('cluster');
     var clusterForm = document.getElementById('clusterForm');
     var textCluster = document.getElementById('textCluster');
+
+    var departmentSelect = document.getElementById('department');
+    var departmentForm = document.getElementById('departmentForm');
+    var textDepartment = document.getElementById('textDepartment');
 
     // Cuando se cambia la selección, almacenar el valor en el almacenamiento local
     clusterSelect.addEventListener('change', function() {
@@ -76,17 +116,11 @@
         clusterForm.submit();
     });
 
-    // Cuando se carga la página, restaurar la selección anterior si existe
-    window.onload = function() {
-        var clusterSeleccionado = localStorage.getItem('clusterSeleccionado');
-        if (clusterSeleccionado) {
-            clusterSelect.value = clusterSeleccionado;
-            
-            //update text
-            textCluster.textContent = "Calls for the  " + clusterSelect.options[clusterSelect.selectedIndex].text + " cluster:";
-
-        }
-    };
+    departmentSelect.addEventListener('change', function() {
+        localStorage.setItem('departmentSeleccionado', departmentSelect.value);
+        // Enviar el formulario automáticamente
+        departmentForm.submit();
+    });
 
     function searchCalls(keyword) {
         // Obtener la lista de convocatorias y el contenedor
@@ -110,7 +144,26 @@
         }
     }
 
+    function searchResearcher(keyword) {
+        // Obtener la lista de investigadores y el contenedor
+        var researcherList = document.getElementById('researcherList');
+        if (!researcherList) return; // Verificar que el elemento existe
+        var researchers = researcherList.getElementsByTagName('li');
 
+        // Convertir el texto de búsqueda a minúsculas para una comparación insensible a mayúsculas y minúsculas
+        keyword = keyword.toLowerCase();
+
+        // Iterar sobre los investigadores y mostrar solo los que coinciden con el texto de búsqueda
+        for (var i = 0; i < researchers.length; i++) {
+            var researcher = researchers[i];
+            var name = researcher.textContent || researcher.innerText; // Obtener el texto del investigador
+
+            // Comparar el texto del investigador con el texto de búsqueda
+            if (name.toLowerCase().includes(keyword)) {
+                researcher.style.display = ''; // Mostrar el investigador si coincide
+            } else {
+                researcher.style.display = 'none'; // Ocultar el investigador si no coincide
+            }
+        }
+    }
 </script>
-
-</html>

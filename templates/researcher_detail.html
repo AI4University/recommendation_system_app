@@ -17,37 +17,63 @@
 
     <div class="researcher-info">
         <h1>{{ researcher[0]['Name'] }}</h1>
-        <a class="researcher-link" href="https://researchportal.uc3m.es/display/{{ researcher[0]['invID'] }}" target="_blank">Go to research portal profile</a>
+        <a class="researcher-link" href="https://researchportal.uc3m.es/display/{{ researcher[0]['id_RP'] }}" target="_blank">Go to research portal profile</a>
     </div>
     <p><strong>Researcher category:</strong> {{ researcher[0]['Category']}}</p>
     <p><strong>Researcher Department:</strong> {{ researcher[0]['Department']}}</p>
-    <p><strong>Research Group:</strong> {{ researcher[0]['Research Group']}}</p>
+    <p><strong>Research Group:</strong> {{ researcher[0]['Research_Group']}}</p>
     <p><strong>Researcher main Subject:</strong> {{ researcher[0]['Subjects']}}</p>
-    <p><strong>Number of Publications:</strong> {{ researcher[0]['no Publis']}}</p>
+    <p><strong>Number of Publications:</strong> {{ researcher[0]['no_publis']}}</p>
 
+    <div id="formsWrapper">
+        <div id="formsContainer">
+            <form action="{{ url_for('researcher_detail', researcher_id=researcher[0]['id_researcher']) }}" method="post">
+                <input type="hidden" name="form_type" value="filters_form">
+                <fieldset>
+                    <legend>Select Filters to apply for the recommendations:</legend>
+                    
+                    <label for="use_publications_projects">Use only:</label>
+                    <br>
+                    <label><input type="checkbox" name="filters" value="publications">Publications</label>
+                    <br>
+                    <label><input type="checkbox" name="filters" value="projects">Projects</label>
+                    <br><br>
     
-    <div id="formsContainer">
-        <form action="" method="post">
-        <fieldset>
-            <legend>Select a method for the recommendations:</legend>
-            <label><input type="checkbox" name="options" value="word2vec">Cosine similarity computed over word2vec embeddings</label>
-            <label><input type="checkbox" name="options" value="bert">Cosine similarity computed over BERT embeddings</label>
-            <label><input type="checkbox" name="options" value="tf-idf">Cosine similarity computed over TF-IDF vectorizations</label>
-            <label><input type="checkbox" name="options" value="bhattacharyya">Bhattacharyya similarity of topics distributions</label>
-        </fieldset>
-        </select>
+                    <button type="submit">Save Filters</button>
+                </fieldset>
+            </form>
+        </div>
+        <div id="formsContainer">
+            <form action="{{ url_for('researcher_detail', researcher_id=researcher[0]['id_researcher']) }}" method="post">
+                <fieldset>
+                <input type="hidden" name="form_type" value="methods_form">
+                <input type="hidden" name="page_type" value="researcher_detail">
 
+                <legend>Select a method for the recommendations:</legend>
+                <label><input type="checkbox" name="options" value="word2vec">Cosine similarity computed over word2vec embeddings</label>
+                <br>
+                <label><input type="checkbox" name="options" value="BERT">Cosine similarity computed over BERT embeddings</label>
+                <br>
+                <label><input type="checkbox" name="options" value="tfidf">Cosine similarity computed over TF-IDF vectorizations</label>
+                <br>
+                <label><input type="checkbox" name="options" value="bhattacharyya">Bhattacharyya similarity of topics distributions</label>
+                <br>
+                <label><input type="checkbox" name="options" value="separated">Similarity computed over separated topic models</label>
+            </fieldset>
+            
             <br>
+
             <label for="recommendation_number">Introduce the desired number of recommendations:</label>
             <input type="number" name="number_recommendations" id="number_recommendations" min="1" required>
             <br>
-            <button type="submit">Obtain recommended Calls</button>
-        </form>
+            <button type="submit">Obtain recommended researchers</button>
+            </form>
+        </div>
     </div>
-
+    
     {% if recommendations %}
         {% for method, calls in recommendations.items() %}
-            <h2>{{ method }}</h2>
+            <h3>{{ method }}</h3>
             <ul>
                 {% for call in calls %}
                 <li> <a href="{{ url_for('call_detail', call=call['Call']) }}"> {{ call['Title'] }}</a> - similarity: {{call['similarity']}} - Cluster: {{call['Work Programme']}}</li>
@@ -55,5 +81,5 @@
             </ul>
         {% endfor %}
     {% endif %}
-
-   </body>
+</body>
+</html>

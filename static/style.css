@@ -4,11 +4,16 @@ body {
     margin-top: 20px;
 }
 
-h1, h2, h3 {
+h1 {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     color: #333;
 }
 
+h2 {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: #fff;
+    text-align: center;
+}
 
 p {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
@@ -24,9 +29,14 @@ a {
     color: inherit; /* Hereda el color del texto del elemento padre */
 }
 
-li {
-    list-style-type: none; /* Elimina el marcador de lista */
+ul {
+    list-style-type: none; /* Elimina los puntos de la lista */
+    padding: 0;
 }
+ul li {
+    margin-bottom: 10px; /* Espacio entre los elementos de la lista */
+}
+
 
 legend {
     color: #fff;
@@ -122,7 +132,21 @@ legend {
     text-decoration: none;
     color: #000; /* Color del enlace */
 }
-
+#formsWrapper {
+    display: flex;
+    justify-content: space-between;
+}
+#formsContainer {
+    flex: 1;
+    margin: 0 10px;
+}
 .researcher-link:hover {
     text-decoration: underline;
+}
+output {
+    color: white;
+}
+#listsWrapper {
+    flex: 1;
+    margin: 0 10px;
 }

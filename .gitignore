@@ -1,0 +1,37 @@
+__pycache__
+.DS_Store
+.ipynb_checkpoints
+.vscode
+sim_matrices/
+
+
+ File formats to ignore
+*.zip
+*.pkl
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Keep directories
+!dbManager/
+!dbBase/
+
+# Keep pySpark notebooks
+!pySpark/*.ipynb
+
+# Local configuration file
+*config.cf
+
+# docx files
+*.docx
+
+# Mounting of files remotely on Mac
+.DS_Store
+
+
