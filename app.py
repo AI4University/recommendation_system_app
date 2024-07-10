@@ -150,17 +150,16 @@ def get_recommendations(item, recommendation_method, num_recommendations, filter
     num_recommendations -> Number of desired researchers to obtain
     filters -> Dictionary containig the value of the  filters
     '''
-    print(filters)
 
     # Path to sim matrices
     path_sim = '/Volumes/data_ml4ds/AI4U/Datasets/similarity_matrices/publications/'
-    save_path = '/Volumes/usuarios_ml4ds/mbalairon/github/recommendation_system_app_dup/sim_matrices/'
+    save_path = '/Volumes/usuarios_ml4ds/mbalairon/github/recommendation_system_app/sim_matrices/'
 
     # load researchers database
     df_researchers = pd.read_parquet('/Volumes/data_ml4ds/AI4U/Datasets/ResearchPortal/20240321/parquet/researchers.parquet')
     df_horizon = pd.read_parquet('/Volumes/data_ml4ds/AI4U/Datasets/work_programmes/20240510/horizon_work_programmes.parquet')    
     
-    # create sim matrix for researchers and save filtered sim matrix
+    # create a databse relating researchers projects and publications
     df_project_publication_researcher = pd.concat([df_publications_researchers[['id_paper', 'id_researcher']], df_projects_researchers[['actID', 'id_researcher']].rename(columns={'actID':'id_paper'})], ignore_index=True)
     df_project_publication_researcher['id_paper'] = df_project_publication_researcher['id_paper'].apply(convert_to_str)
     df_project_publication_researcher['id_researcher'] = df_project_publication_researcher['id_researcher'].astype(str)
